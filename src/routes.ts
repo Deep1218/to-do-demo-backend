@@ -1,6 +1,7 @@
 import * as express from "express";
 import { UserRoute } from "./module/user/user.route";
-import { Constants, ResponseCode } from "./helpers/config/constants";
+import { TaskRoute } from "./module/task/task.route";
+import { ResponseCode } from "./helpers/config/constants";
 import { ResponseBuilder } from "./helpers/responseBuilder";
 export class Routes {
   protected basePath: any;
@@ -19,6 +20,7 @@ export class Routes {
   public path() {
     const router = express.Router();
     router.use("/user", UserRoute);
+    router.use("/task", TaskRoute);
     router.get("/health-check", (req, res) => {
       return res.status(ResponseCode.SUCCESS_CODE).json({ success: true });
     });

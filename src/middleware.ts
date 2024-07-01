@@ -12,12 +12,23 @@ export class Middleware {
       if (authorization) {
         const authToken = authorization.split(" ")[1];
         if (authToken) {
-          const tokenPayload: any = JWT.verifyToken(authToken);
-          const user = await this.userUtils.getUserById(tokenPayload.sub._id);
-          if (user.code == 200) {
-            const { password, ...userData } = user.data._doc;
-            req._user = userData;
-            next();
+          const activitData = await this.userUtils.getActivityByToken(
+            authToken
+          );
+          if (activitData.data) {
+            const tokenPayload: any = JWT.verifyToken(authToken);
+            const user = await this.userUtils.getUserById(tokenPayload.sub._id);
+            if (
+              user.code == 200 &&
+              activitData.data.userId == tokenPayload.sub._id
+            ) {
+              const { password, ...userData } = user.data._doc;
+              req._user = userData;
+              next();
+            } else {
+              const response = ResponseBuilder.unauthorised();
+              return res.status(response.code).json(response);
+            }
           } else {
             const response = ResponseBuilder.unauthorised();
             return res.status(response.code).json(response);

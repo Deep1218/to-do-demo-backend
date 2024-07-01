@@ -8,7 +8,7 @@ export class ResponseBuilder {
   public data!: any;
   public description!: string;
 
-  public static successMessage(msg: string): ResponseBuilder {
+  public static successMessage(msg: string = "Sucess"): ResponseBuilder {
     const rb: ResponseBuilder = new ResponseBuilder();
     rb.code = ResponseCode.SUCCESS_CODE;
     rb.msg = msg;

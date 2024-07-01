@@ -3,6 +3,7 @@ import { db } from "./connection";
 import { Routes } from "./routes";
 import dotenv from "dotenv";
 import morgan from "morgan";
+import cors from "cors";
 dotenv.config();
 db();
 const port = process.env.PORT;
@@ -15,6 +16,8 @@ export class App {
     if (NODE_ENV == "development") {
       this.logMode = "dev";
     }
+    this.app.use(morgan(this.logMode));
+    this.app.use(cors());
     this.app.all("/*", (req: Request, res: Response, next) => {
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Request-Headers", "*");
@@ -22,7 +25,7 @@ export class App {
         "Access-Control-Allow-Headers",
         "Origin, X-Requested-With, Content-Type, Accept,Access-Control-Allow-Headers, Authorization"
       );
-      res.header("Access-Control-Allow-Methods", "GET, POST, PUT , DELETE");
+      res.header("Access-Control-Allow-Methods", "*");
       if (req.method === "OPTIONS") {
         res.writeHead(200);
         res.end();
@@ -42,7 +45,6 @@ export class App {
         next();
       }
     );
-    this.app.use(morgan(this.logMode));
     this.app.use(express.json({ type: "application/vnd.api+json" }));
     const routes = new Routes(NODE_ENV);
     this.app.use("/", routes.path());

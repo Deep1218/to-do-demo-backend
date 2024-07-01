@@ -36,7 +36,16 @@ export class UserController {
       const isMatched = await bcrypt.compare(password, actuallPassword);
 
       if (isMatched) {
-        const token = JWT.generateToken({ _id: user._id, email: user.email });
+        const activityData = await this.userUtils.getActivity(user._id);
+        let token: string;
+
+        if (activityData.data) {
+          token = activityData.data.token;
+        } else {
+          token = JWT.generateToken({ _id: user._id, email: user.email });
+          this.userUtils.saveActivity({ userId: user._id, token });
+        }
+
         const response = ResponseBuilder.data({ token, ...user });
         return res.status(response.code).json(response);
       }
@@ -51,7 +60,20 @@ export class UserController {
       return res.status(response.code).json(response);
     }
   };
-
+  public logout = async (req: any, res: Response) => {
+    try {
+      const { _id } = req._user;
+      this.userUtils.removeActivity(_id);
+      const response = ResponseBuilder.successMessage(
+        ResponseMessage.LOGOUT_SUCCESS
+      );
+      return res.status(response.code).json(response);
+    } catch (error) {
+      console.error(error);
+      const response = ResponseBuilder.errorMessage();
+      return res.status(response.code).json(response);
+    }
+  };
   public deleteMyAccount = async (req: any, res: Response) => {
     try {
       const { _id } = req._user;

@@ -25,6 +25,12 @@ router.post(
   userController.logIn
 );
 
+router.patch(
+  Routes.USER.LOGOUT,
+  globalMiddleware.verifyUser,
+  userController.logout
+);
+
 router.delete(
   Routes.USER.DELETE,
   globalMiddleware.verifyUser,

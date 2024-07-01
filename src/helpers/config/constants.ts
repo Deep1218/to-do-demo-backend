@@ -45,6 +45,7 @@ export class Routes {
   };
   public static readonly USER = {
     DELETE: "/",
+    LOGOUT: "/logout",
   };
 }
 
@@ -67,6 +68,10 @@ export class ResponseMessage {
     "Phone number is not verified! Please verify your phone number";
   public static readonly UNAUTHORIZED = "You are unauthorized";
   public static readonly ACCOUNT_DELETED = "Your account has been deleted";
+  public static readonly LOGOUT_SUCCESS = "Logout successfully";
+  public static readonly TASKS_NOT_FOUND = "Tasks not found";
+  public static readonly TASK_NOT_FOUND = "Task not found";
+  public static readonly TASK_DELETED = "Task deleted successfully";
 }
 export class ResponseCode {
   public static readonly UNAUTHORIZED_CODE = 401;

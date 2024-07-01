@@ -2,6 +2,7 @@ import { ObjectId } from "mongoose";
 import { ResponseMessage } from "../../helpers/config/constants";
 import { ResponseBuilder } from "../../helpers/responseBuilder";
 import { UserModel } from "../../schemas/user";
+import { UserActivityModel } from "../../schemas/userActivity";
 
 export class UserUtils {
   public async signUp(data: Record<string, any>): Promise<ResponseBuilder> {
@@ -61,6 +62,49 @@ export class UserUtils {
         }
       ).exec();
       return ResponseBuilder.data(user);
+    } catch (error) {
+      console.error(error);
+      return ResponseBuilder.errorMessage();
+    }
+  }
+  public async saveActivity(data: Record<string, any>) {
+    try {
+      const newActivity = new UserActivityModel(data);
+      const user = await newActivity.save();
+
+      if (user._id) {
+        return ResponseBuilder.successMessage();
+      } else {
+        return ResponseBuilder.badRequest(ResponseMessage.SIGNUP_FAILED);
+      }
+    } catch (error) {
+      console.error(error);
+      return ResponseBuilder.errorMessage();
+    }
+  }
+
+  public async removeActivity(userId: string) {
+    try {
+      await UserActivityModel.deleteOne({ userId });
+      return ResponseBuilder.successMessage();
+    } catch (error) {
+      console.error(error);
+      return ResponseBuilder.errorMessage();
+    }
+  }
+  public async getActivity(userId: string) {
+    try {
+      const activity = await UserActivityModel.findOne({ userId });
+      return ResponseBuilder.data(activity);
+    } catch (error) {
+      console.error(error);
+      return ResponseBuilder.errorMessage();
+    }
+  }
+  public async getActivityByToken(token: string) {
+    try {
+      const activity = await UserActivityModel.findOne({ token });
+      return ResponseBuilder.data(activity);
     } catch (error) {
       console.error(error);
       return ResponseBuilder.errorMessage();
