@@ -17,15 +17,21 @@ export class Middleware {
           );
           if (activitData.data) {
             const tokenPayload: any = JWT.verifyToken(authToken);
-            const user = await this.userUtils.getUserById(tokenPayload.sub._id);
-            if (
-              user.code == 200 &&
-              activitData.data.userId == tokenPayload.sub._id
-            ) {
-              const { password, ...userData } = user.data._doc;
-              req._user = userData;
-              next();
+            if (tokenPayload) {
+              const user = await this.userUtils.getUserById(tokenPayload.sub._id);
+              if (
+                user.code == 200 &&
+                activitData.data.userId == tokenPayload.sub._id
+              ) {
+                const { password, ...userData } = user.data._doc;
+                req._user = userData;
+                next();
+              } else {
+                const response = ResponseBuilder.unauthorised();
+                return res.status(response.code).json(response);
+              }
             } else {
+              this.userUtils.removeActivityByToken(authToken)
               const response = ResponseBuilder.unauthorised();
               return res.status(response.code).json(response);
             }

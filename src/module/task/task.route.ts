@@ -31,8 +31,8 @@ router.put(
 
 router.delete(
   "/:id",
-  taskMiddlleware.taskExists,
   globalMiddleware.verifyUser,
+  taskMiddlleware.taskExists,
   taskController.deleteTask
 );
 

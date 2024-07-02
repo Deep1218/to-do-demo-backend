@@ -110,4 +110,13 @@ export class UserUtils {
       return ResponseBuilder.errorMessage();
     }
   }
+  public async removeActivityByToken(token: string) {
+    try {
+      await UserActivityModel.deleteOne({ token });
+      return ResponseBuilder.successMessage();
+    } catch (error) {
+      console.error(error);
+      return ResponseBuilder.errorMessage();
+    }
+  }
 }
